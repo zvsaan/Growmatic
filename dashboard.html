@@ -636,10 +636,30 @@
                 }
                 
                 // Get relay state
+                const relayResponse = await axios.get(
+                    `https://backend.thinger.io/v3/users/subektibimowicaksono/devices/grow_matic/resources/relay`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUwMzAwMzAsImlhdCI6MTc0NTAyMjgzMCwicm9sZSI6InVzZXIiLCJ1c3IiOiJzdWJla3RpYmltb3dpY2Frc29ubyJ9.rNm646Gr6CuigY67s6QaxQSIiEjwsqhyOH_68WGkVBo`
+                        }
+                    }
+                );
 
-                
+                currentRelayState = relayResponse.data;
+                updateRelayDisplay(currentRelayState);
+
                 // Get mode
+                const modeResponse = await axios.get(
+                    `https://backend.thinger.io/v3/users/subektibimowicaksono/devices/grow_matic/resources/mode`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUwMzAwMzAsImlhdCI6MTc0NTAyMjgzMCwicm9sZSI6InVzZXIiLCJ1c3IiOiJzdWJla3RpYmltb3dpY2Frc29ubyJ9.rNm646Gr6CuigY67s6QaxQSIiEjwsqhyOH_68WGkVBo`
+                        }
+                    }
+                );
 
+                currentMode = modeResponse.data;
+                updateModeDisplay(currentMode);
                 
             } catch (error) {
                 console.error('Error fetching data from Thinger.io:', error);
