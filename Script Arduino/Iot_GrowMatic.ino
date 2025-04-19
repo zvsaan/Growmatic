@@ -1,115 +1,139 @@
 #include <WiFi.h>
 #include <ThingerESP32.h>
 #include <DHT.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
-// ====== Thinger.io Configuration ======
+// Thinger.io Setup
 #define USERNAME "subektibimowicaksono"
 #define DEVICE_ID "grow_matic"
 #define DEVICE_CREDENTIAL "mFD$II9S8T7p2KUs"
 
-// Initialize Thinger.io
 ThingerESP32 thing(USERNAME, DEVICE_ID, DEVICE_CREDENTIAL);
 
-// Pin DHT22 and Relay
+// DHT Sensor
 #define DHTPIN 4
-#define RELAY_PIN 5
 #define DHTTYPE DHT22
-
-// Initialize DHT
 DHT dht(DHTPIN, DHTTYPE);
 
-// WiFi credentials
+// Relay
+#define RELAY_PIN 5
+
+// LCD Setup (Alamat default biasanya 0x27 atau 0x3F)
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Alamat LCD, jumlah kolom, jumlah baris
+
+// WiFi
 const char* ssid = "Kost gudang belakang";
 const char* password = "herimuktisubroto";
 
-// Variables for control
+// Variables
 bool isAutoMode = true;
 bool relayState = false;
+float suhu = 0.0;
+float kelembaban = 0.0;
 
 void setup() {
   Serial.begin(115200);
-  
-  // Initialize relay pin
+
+  // Relay
   pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(RELAY_PIN, LOW);  // Turn off relay initially
-  
-  // Initialize DHT sensor
+  digitalWrite(RELAY_PIN, LOW);
+
+  // Sensor dan WiFi
   dht.begin();
-  
-  // Connect to WiFi
   thing.add_wifi(ssid, password);
-  
-  // Define resources in Thinger.io
-  thing["sensor"] >> [](pson& out){
-    out["temperature"] = dht.readTemperature();
-    out["humidity"] = dht.readHumidity();
+
+  // LCD
+  lcd.init();
+  lcd.backlight();
+
+  // Thinger resources
+  thing["sensor"] >> [](pson &out) {
+    out["temperature"] = suhu;
+    out["humidity"] = kelembaban;
   };
-  
-  // Control relay from Thinger.io
-  thing["relay"] << [](pson& in){
-    if(in.is_empty()){
+
+  thing["relay"] << [](pson &in) {
+    if (in.is_empty()) {
       in = (bool)relayState;
-    }
-    else{
+    } else {
       relayState = in;
       digitalWrite(RELAY_PIN, relayState ? HIGH : LOW);
-      isAutoMode = false; // switch to manual mode when controlled from dashboard
+      isAutoMode = false;
     }
   };
-  
-  // Control mode from Thinger.io
-  thing["mode"] << [](pson& in){
-    if(in.is_empty()){
+
+  thing["mode"] << [](pson &in) {
+    if (in.is_empty()) {
       in = (bool)isAutoMode;
-    }
-    else{
+    } else {
       isAutoMode = in;
     }
   };
+
+  // Welcome Message
+  lcd.setCursor(0, 0);
+  lcd.print("  GROW-MATIC  ");
+  delay(2000);
+  lcd.clear();
 }
 
 void loop() {
   thing.handle();
-  
-  // Read and send sensor data every 2 seconds
-  static unsigned long lastSent = 0;
-  if(millis() - lastSent > 2000){
-    lastSent = millis();
-    
+
+  static unsigned long lastUpdate = 0;
+  if (millis() - lastUpdate > 2000) {
+    lastUpdate = millis();
+
     float t = dht.readTemperature();
     float h = dht.readHumidity();
-    
-    if(!isnan(t) && !isnan(h)){
-      // Data will be automatically sent to Thinger.io when accessed
+
+    if (!isnan(t) && !isnan(h)) {
+      suhu = t;
+      kelembaban = h;
+
       thing.stream(thing["sensor"]);
-      
-      // Log to Serial Monitor
+
+      // Log ke Serial
       Serial.print("Suhu: ");
-      Serial.print(t);
+      Serial.print(suhu);
       Serial.print(" °C, Kelembaban: ");
-      Serial.print(h);
+      Serial.print(kelembaban);
       Serial.println(" %");
+
+      // Tampilkan di LCD
+      lcd.setCursor(0, 0);
+      lcd.print("T:");
+      lcd.print(suhu, 1);
+      lcd.print((char)223); // Derajat
+      lcd.print("C H:");
+      lcd.print(kelembaban, 0);
+      lcd.print("%");
+
+      lcd.setCursor(0, 1);
+      lcd.print(isAutoMode ? "AUTO " : "MANUAL ");
+      lcd.print("Relay:");
+      lcd.print(relayState ? "ON " : "OFF");
+    } else {
+      Serial.println("⚠ Gagal baca DHT!");
+      lcd.setCursor(0, 0);
+      lcd.print("Gagal baca DHT  ");
     }
-    else {
-      Serial.println("Gagal membaca DHT22!");
-    }
-    
-    // Automatic control if in auto mode
-    if(isAutoMode){
-      if(t > 30){  // If temperature > 30°C, turn on relay
+
+    // Otomatis
+    if (isAutoMode) {
+      if (suhu > 30) {
         relayState = true;
-        digitalWrite(RELAY_PIN, HIGH);
-      }
-      else {       // If temperature <= 30°C, turn off relay
+      } else {
         relayState = false;
-        digitalWrite(RELAY_PIN, LOW);
       }
+      digitalWrite(RELAY_PIN, relayState ? HIGH : LOW);
     }
-    
-    // Log relay state
+
     Serial.print("Relay: ");
     Serial.println(relayState ? "ON" : "OFF");
     Serial.print("Mode: ");
     Serial.println(isAutoMode ? "AUTO" : "MANUAL");
+    Serial.println("=========================");
   }
 }
