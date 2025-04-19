@@ -51,7 +51,7 @@ app.get('/get-data', (req, res) => {
 });
 
 
-// Upgrade HTTP server ke WebSocket server
-const server = app.listen(3001, () => {
-  console.log(`Server running on port 3001`);
+
+const server = app.listen(3000, () => {
+  console.log(`Server running on port 3000`);
 });
