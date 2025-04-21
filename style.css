@@ -1,0 +1,732 @@
+:root {
+    --primary-color: #00BFA5;
+    --primary-hover: #00897B;
+    --secondary-color: #00897B;
+    --accent-color: #FF7043;
+    --bg-color: #F7F9FC;
+    --card-bg: #ffffff;
+    --text-color: #263238;
+    --light-text: #78909C;
+    --card-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    --btn-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    --border-radius: 20px;
+    --card-border-radius: 24px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.5;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+}
+
+.app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: var(--bg-color);
+    height: 100vh;
+    overflow-y: auto;
+    position: relative;
+    padding-bottom: 80px;
+}
+
+/* Header Styles */
+.header {
+    background-color: var(--bg-color);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.weather-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-color);
+}
+
+.weather-temp {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* Card Grid */
+.card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 0 15px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-title {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.metric-card {
+    min-height: 160px;
+}
+
+.card-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    background-color: rgba(0, 191, 165, 0.1);
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.card-icon.accent {
+    color: var(--accent-color);
+    background-color: rgba(255, 112, 67, 0.1);
+}
+
+/* Status and Values */
+.active-devices {
+    color: var(--light-text);
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.metric-value {
+    display: flex;
+    align-items: baseline;
+    margin-top: 15px;
+    gap: 5px;
+}
+
+.value {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.unit {
+    font-size: 16px;
+    color: var(--light-text);
+}
+
+/* Switch Styles */
+.switch-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #E0E0E0;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: var(--primary-color);
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* Camera Card Styles */
+.camera-card {
+    position: relative;
+    min-height: 180px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.camera-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.camera-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+    padding: 20px;
+    color: white;
+}
+
+.camera-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.camera-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.camera-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* Consumption Section */
+.consumption {
+    background-color: var(--card-bg);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+    margin: 15px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 90px;
+}
+
+.consumption-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.consumption-cost {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.consumption-label {
+    color: var(--light-text);
+    font-size: 14px;
+}
+
+.period-selector {
+    padding: 7px 15px;
+    border-radius: 20px;
+    border: 1px solid #E0E0E0;
+    background-color: white;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chart-container {
+    height: 150px;
+    margin-top: 20px;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background-color: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--light-text);
+    text-decoration: none;
+    font-size: 12px;
+    padding: 10px;
+}
+
+.nav-item.active {
+    color: var(--primary-color);
+}
+
+.nav-icon {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+/* Sidebar Style */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100%;
+    background-color: #00BFA5;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    transform: translateX(-100%); /* ini bikin sidebar sembunyi */
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.sidebar-header h2 {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin: 20px 0;
+}
+
+.sidebar-menu li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.sidebar-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+
+/* Login Page Styles */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+}
+
+.login-container {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-header {
+    margin-bottom: 30px;
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+}
+
+.login-header h1 {
+    color: var(--primary-dark);
+    margin-bottom: 5px;
+}
+
+.login-header p {
+    color: var(--light-text);
+    font-size: 14px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--light-text);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 191, 165, 0.2);
+}
+
+.login-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.login-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.login-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--light-text);
+}
+
+.login-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+
+/* Camera Page Styles */
+.camera-container {
+    padding: 15px;
+}
+
+.camera-view {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #000;
+}
+
+.live-camera {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.camera-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    color: white;
+    display: flex;
+    justify-content: space-between;
+}
+
+.camera-status {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.camera-status i {
+    font-size: 10px;
+}
+
+.camera-status.active {
+    color: #4CAF50;
+}
+
+.camera-status.active i {
+    color: #4CAF50;
+}
+
+.camera-time {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.camera-controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.control-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.control-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.control-btn i {
+    font-size: 20px;
+}
+
+.control-btn.recording {
+    background-color: #ffebee;
+    color: #f44336;
+}
+
+.camera-gallery {
+    margin-top: 20px;
+}
+
+.gallery-title {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: var(--dark-text);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.capture-time {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* Update bottom nav icon for camera */
+.bottom-nav .nav-icon.fa-camera {
+    font-size: 18px;
+}
+
+/* Profile Page Styles */
+.profile-content {
+    padding: 0 20px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-avatar-container {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto 15px;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+}
+
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-name {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.profile-email {
+    color: var(--light-text);
+    font-size: 14px;
+}
+
+.profile-section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 16px;
+    color: var(--light-text);
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+}
+
+.profile-item i:first-child {
+    width: 24px;
+    color: var(--primary-color);
+    margin-right: 15px;
+}
+
+.profile-item span {
+    flex-grow: 1;
+    font-size: 15px;
+}
+
+.profile-item i:last-child {
+    color: var(--light-text);
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border: none;
+    border-radius: 10px;
+    color: var(--error-color);
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+}

@@ -10,9 +10,9 @@ app.use(cors());
 // Buat koneksi ke database MySQL
 const db = mysql.createConnection({
   host: 'localhost',
-  user: 'root', // Ganti dengan username database Anda
-  password: '', // Ganti dengan password database Anda
-  database: 'sensor_db' // Ganti dengan nama database Anda
+  user: 'root',
+  password: '',
+  database: 'sensor_db'
 });
 
 db.connect((err) => {
