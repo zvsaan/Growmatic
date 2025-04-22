@@ -9,6 +9,27 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-page">
+    <!-- Loader overlay -->
+    <div class="loader-overlay" id="loaderOverlay"></div>
+    
+    <!-- WiFi Loader -->
+    <div id="wifi-loader" data-text="Connecting">
+        <svg class="circle-outer" viewBox="0 0 86 86">
+            <circle class="back" cx="43" cy="43" r="40"></circle>
+            <circle class="front" cx="43" cy="43" r="40"></circle>
+            <circle class="new" cx="43" cy="43" r="40"></circle>
+        </svg>
+        <svg class="circle-middle" viewBox="0 0 60 60">
+            <circle class="back" cx="30" cy="30" r="27"></circle>
+            <circle class="front" cx="30" cy="30" r="27"></circle>
+        </svg>
+        <svg class="circle-inner" viewBox="0 0 34 34">
+            <circle class="back" cx="17" cy="17" r="14"></circle>
+            <circle class="front" cx="17" cy="17" r="14"></circle>
+        </svg>
+        <div class="text" data-text="Connecting"></div>
+    </div>
+    
     <div class="login-container">
         <div class="login-header">
             <img src="Assets/logo.png" alt="Grow Matic Logo" class="login-logo">
@@ -16,19 +37,78 @@
             <p>Smart Garden Monitoring System</p>
         </div>
         
-        <form class="login-form">
+        <form class="login-form" id="loginForm">
             <div class="input-group">
                 <i class="fas fa-user"></i>
-                <input type="text" placeholder="Username" required>
+                <input type="text" id="username" name="username" placeholder="Username" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Password" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
             <button type="submit" class="login-btn">Login</button>
-        </form>
+        </form>  
     </div>
     
-    <script src="script.js"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const loader = document.getElementById("wifi-loader");
+        const textElement = loader.querySelector('.text');
+        loader.style.display = "flex";
+        document.getElementById("loaderOverlay").style.display = "block";
+
+        try {
+            const res = await fetch("http://localhost:3000/api/admin-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                // Change loader text to "Success"
+                textElement.setAttribute("data-text", "Loading..");
+
+                setTimeout(() => {
+                    window.location.href = "dashboard.html";
+                }, 3000);
+            } else {
+                loader.style.display = "none";
+                document.getElementById("loaderOverlay").style.display = "none";
+                showToast(data.message);
+            }
+        } catch (err) {
+            loader.style.display = "none";
+            document.getElementById("loaderOverlay").style.display = "none";
+            showToast("Terjadi kesalahan: " + err.message);
+        }
+    });
+
+    // Function to show toast notification
+    function showToast(message) {
+        const toast = document.createElement("div");
+        toast.classList.add("toast");
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add("show");
+        }, 100);
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+    </script>
 </body>
 </html>
